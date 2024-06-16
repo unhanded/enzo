@@ -1,4 +1,4 @@
-package clock
+package vsm
 
 type EnzoClock interface {
 	Init()
