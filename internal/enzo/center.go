@@ -37,7 +37,7 @@ type workCenter struct {
 func (wc *workCenter) Init() error {
 	fmt.Printf("Workcenter %s initializing\n", wc.Id())
 
-	wc.cell = cell{parent: wc, processTime: wc.baselineProcessTime}
+	wc.cell = cell{parent: wc}
 	go func() {
 		for {
 			time.Sleep(time.Millisecond * time.Duration(int64(250)))
@@ -121,7 +121,6 @@ type cell struct {
 	parent        *workCenter
 	item          enzo.WorkItem
 	lastStartTime int64
-	processTime   int64
 }
 
 func (c cell) ItemExtractable() bool {
@@ -129,7 +128,7 @@ func (c cell) ItemExtractable() bool {
 }
 
 func (c cell) IsProcessing() bool {
-	return c.lastStartTime+c.processTime > Now() && c.HasItem()
+	return c.lastStartTime+c.parent.BaselineProcessTime() > Now() && c.HasItem()
 }
 
 func (c cell) ItemInsertable() bool {
@@ -137,7 +136,7 @@ func (c cell) ItemInsertable() bool {
 }
 
 func (c cell) PassedFinishTime() bool {
-	return c.lastStartTime+c.processTime < Now()
+	return c.lastStartTime+c.parent.BaselineProcessTime() < Now()
 }
 
 func (c cell) HasItem() bool {
@@ -145,7 +144,7 @@ func (c cell) HasItem() bool {
 }
 
 func (c *cell) Insert(w enzo.WorkItem) {
-	fmt.Printf("WORKCENTER: %s beginning work on item %s, ETA: %d ticks\n", c.parent.Id(), w.Id(), c.processTime)
+	fmt.Printf("WORKCENTER: %s beginning work on item %s, ETA: %d ticks\n", c.parent.Id(), w.Id(), c.parent.BaselineProcessTime())
 	c.lastStartTime = Now()
 	c.item = w
 }

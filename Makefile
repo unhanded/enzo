@@ -1,10 +1,10 @@
-build: protobuf go
+build: protobuf cmd
 
-
-go:
+cmd:
 	echo "building go application..."
-	go build -o out/server ./app/server
+	go build -o out/enzosrv ./cmd/enzosrv
 	go build -o out/enzoctl ./cmd/enzoctl
+	go build -o out/enzoitem ./cmd/enzoitem
 
 protobuf: proto-clean
 	echo "building protobuf assets..."

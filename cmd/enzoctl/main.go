@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/unhanded/enzo-vsm/internal/enzoctl"
+	"github.com/unhanded/enzo-vsm/internal/enzocfg"
 	"github.com/unhanded/enzo-vsm/pkg/enzo"
 	"gopkg.in/yaml.v3"
 )
@@ -30,7 +30,7 @@ func requestApply(addr string, fp string) {
 
 	rdr := bytes.NewBuffer(data)
 
-	res, reqErr := http.Post(addr+"/apply", "text/plain", rdr)
+	res, reqErr := http.Post("http://"+addr+"/apply", "text/plain", rdr)
 	if reqErr != nil {
 		fmt.Printf("error making request %s\n", reqErr.Error())
 		return
@@ -43,14 +43,14 @@ func requestApply(addr string, fp string) {
 }
 
 func main() {
-	cfg := enzoctl.EnzoCtlCfg{}
+	cfg := enzocfg.EnzoCmdCfg{}
 	err := cfg.Load()
 	if err != nil {
-		fmt.Printf("Error loading config: %s\n", err.Error())
+		fmt.Printf("Error loading config, using default. Error: %s\n", err.Error())
+		cfg.Defaults()
 	}
-	var addr string
+
 	var filepath string
-	flag.StringVar(&addr, "addr", "http://0.0.0.0:29451", "Enzo server endpoint address")
 	flag.StringVar(&filepath, "f", "", "Enzo file")
 	flag.Parse()
 
@@ -62,7 +62,7 @@ func main() {
 	verb := args[0]
 	switch verb {
 	case "apply":
-		requestApply(addr, filepath)
+		requestApply(cfg.Server, filepath)
 	default:
 		fmt.Println("Unknown verb")
 	}

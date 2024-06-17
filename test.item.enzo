@@ -1,0 +1,11 @@
+{
+  "label":"TESTER_ALPHA",
+  "characteristic":"",
+  "route":{
+    "steps":[
+      {
+        "options":[ "x1" ]
+      }
+    ]
+  }
+}
