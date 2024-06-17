@@ -3,10 +3,10 @@ package enzo
 import (
 	"fmt"
 
-	"github.com/unhanded/enzo-vsm/pkg/vsm"
+	"github.com/unhanded/enzo-vsm/pkg/enzo"
 )
 
-func NewWorkItem(id string, label string, characteristics []byte, route vsm.EnzoDynamicRoute) vsm.WorkItem {
+func NewWorkItem(id string, label string, characteristics []byte, route enzo.EnzoDynamicRoute) enzo.WorkItem {
 	return &workItem{
 		id:              id,
 		label:           label,
@@ -19,7 +19,7 @@ type workItem struct {
 	id              string
 	label           string
 	characteristics []byte
-	route           vsm.EnzoDynamicRoute
+	route           enzo.EnzoDynamicRoute
 }
 
 func (wi *workItem) Id() string {
@@ -34,7 +34,7 @@ func (wi *workItem) Characteristic() []byte {
 	return wi.characteristics
 }
 
-func (wi workItem) Route() vsm.EnzoDynamicRoute {
+func (wi workItem) Route() enzo.EnzoDynamicRoute {
 	return wi.route
 }
 

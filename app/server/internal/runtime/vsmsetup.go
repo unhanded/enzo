@@ -6,10 +6,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/unhanded/enzo-vsm/internal/enzo"
-	"github.com/unhanded/enzo-vsm/pkg/vsm"
+	enzo1 "github.com/unhanded/enzo-vsm/pkg/enzo"
 )
 
-func CreateVSM(m vsm.MeshNetwork) *enzo.Vsm {
+func CreateVSM(m enzo1.MeshNetwork) *enzo.Vsm {
 	v := &enzo.Vsm{Network: m, Prm: prometheus.NewRegistry()}
 	return v
 }

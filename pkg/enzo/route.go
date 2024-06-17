@@ -1,4 +1,4 @@
-package vsm
+package enzo
 
 type RouteConfig struct {
 	Steps []StepConfig `json:"steps"`

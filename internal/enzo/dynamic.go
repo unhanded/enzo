@@ -3,24 +3,24 @@ package enzo
 import (
 	"fmt"
 
-	"github.com/unhanded/enzo-vsm/pkg/vsm"
+	"github.com/unhanded/enzo-vsm/pkg/enzo"
 )
 
-func NewDynamicRoute(steps ...vsm.EnzoDynamicStep) vsm.EnzoDynamicRoute {
+func NewDynamicRoute(steps ...enzo.EnzoDynamicStep) enzo.EnzoDynamicRoute {
 	return &dynRoute{
 		steps: steps,
 	}
 }
 
 type dynRoute struct {
-	steps []vsm.EnzoDynamicStep
+	steps []enzo.EnzoDynamicStep
 }
 
-func (dr dynRoute) All() []vsm.EnzoDynamicStep {
+func (dr dynRoute) All() []enzo.EnzoDynamicStep {
 	return dr.steps
 }
 
-func (dr *dynRoute) Current() (vsm.EnzoDynamicStep, error) {
+func (dr *dynRoute) Current() (enzo.EnzoDynamicStep, error) {
 	for _, s := range dr.steps {
 		if !s.IsCompleted() {
 			return s, nil
@@ -42,7 +42,7 @@ func (dr *dynRoute) Sign(workcenterId string) error {
 	return stp.MarkAsComplete()
 }
 
-func (dr *dynRoute) findStepFromId(id string) (vsm.EnzoDynamicStep, error) {
+func (dr *dynRoute) findStepFromId(id string) (enzo.EnzoDynamicStep, error) {
 	for _, step := range dr.steps {
 		for _, idString := range step.Options() {
 			if idString == id {

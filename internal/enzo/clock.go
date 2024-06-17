@@ -3,10 +3,10 @@ package enzo
 import (
 	"time"
 
-	"github.com/unhanded/enzo-vsm/pkg/vsm"
+	"github.com/unhanded/enzo-vsm/pkg/enzo"
 )
 
-func NewClock(initalTime int64, intervalMillisecond int64) vsm.EnzoClock {
+func NewClock(initalTime int64, intervalMillisecond int64) enzo.EnzoClock {
 	return &clock{t: initalTime, tickIntervalMs: intervalMillisecond}
 }
 

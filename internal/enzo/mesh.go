@@ -5,20 +5,20 @@ import (
 	"math/rand"
 
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/unhanded/enzo-vsm/pkg/vsm"
+	"github.com/unhanded/enzo-vsm/pkg/enzo"
 )
 
-func NewMesh() vsm.MeshNetwork {
+func NewMesh() enzo.MeshNetwork {
 	return &mesh{
 		clk:         NewClock(0, 100), // Default 10 TPS
-		workcenters: map[string]vsm.EnzoWorkcenter{},
+		workcenters: map[string]enzo.Workcenter{},
 	}
 }
 
 type mesh struct {
-	parent        vsm.Vsm
-	clk           vsm.EnzoClock
-	workcenters   map[string]vsm.EnzoWorkcenter
+	parent        enzo.Vsm
+	clk           enzo.EnzoClock
+	workcenters   map[string]enzo.Workcenter
 	finishedItems int
 }
 
@@ -44,11 +44,11 @@ func (m *mesh) Init() error {
 	return nil
 }
 
-func (m *mesh) Clock() vsm.EnzoClock {
+func (m *mesh) Clock() enzo.EnzoClock {
 	return m.clk
 }
 
-func (m *mesh) Enroll(center vsm.EnzoWorkcenter) error {
+func (m *mesh) Enroll(center enzo.Workcenter) error {
 	m.workcenters[center.Id()] = center
 	m.workcenters[center.Id()].SetParent(m)
 	m.workcenters[center.Id()].Init()
@@ -61,7 +61,7 @@ func (m *mesh) Unenroll(id string) error {
 	return nil
 }
 
-func (m *mesh) Transfer(item vsm.WorkItem) error {
+func (m *mesh) Transfer(item enzo.WorkItem) error {
 	if item.Route().IsFinished() {
 		fmt.Printf("MESH: Workitem %s leaving network (finished)\n", item.Id())
 		m.finishedItems++
@@ -94,19 +94,23 @@ func (m *mesh) ValidDestination(id string) bool {
 	return ok
 }
 
-func (m *mesh) Nodes() []vsm.EnzoWorkcenter {
-	nodes := make([]vsm.EnzoWorkcenter, 0)
+func (m *mesh) Nodes() []enzo.Workcenter {
+	nodes := make([]enzo.Workcenter, 0)
 	for _, node := range m.workcenters {
 		nodes = append(nodes, node)
 	}
 	return nodes
 }
 
-func (m *mesh) Parent() vsm.Vsm {
+func (m *mesh) Parent() enzo.Vsm {
 	return m.parent
 }
 
-func (m *mesh) SetParent(p vsm.Vsm) error {
+func (m *mesh) SetParent(p enzo.Vsm) error {
 	m.parent = p
+	return nil
+}
+
+func (m *mesh) DeInit() error {
 	return nil
 }

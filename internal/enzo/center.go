@@ -5,15 +5,15 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/unhanded/enzo-vsm/pkg/vsm"
+	"github.com/unhanded/enzo-vsm/pkg/enzo"
 )
 
-func NewWorkcenter(wCfg vsm.WorkcenterConfig) vsm.EnzoWorkcenter {
+func NewWorkcenter(wCfg enzo.WorkcenterConfig) enzo.Workcenter {
 	return &workCenter{
 		id:                  wCfg.Id,
 		label:               wCfg.Label,
 		baselineProcessTime: wCfg.BaselineProcessTime,
-		queue:               make([]vsm.WorkItem, 0),
+		queue:               make([]enzo.WorkItem, 0),
 	}
 }
 
@@ -27,14 +27,14 @@ type workCenter struct {
 	// without any interruptions
 	baselineProcessTime int64
 	// Queue of work items to be processed
-	queue []vsm.WorkItem // FIFO
+	queue []enzo.WorkItem // FIFO
 	// Current work item being processed
 	cell cell
 	// Mesh peer to peer networking for direct routing
-	parent vsm.MeshNetwork
+	parent enzo.MeshNetwork
 }
 
-func (wc *workCenter) Init() {
+func (wc *workCenter) Init() error {
 	fmt.Printf("Workcenter %s initializing\n", wc.Id())
 
 	wc.cell = cell{clock: wc.parent.Clock(), parent: wc, processTime: wc.baselineProcessTime}
@@ -54,6 +54,7 @@ func (wc *workCenter) Init() {
 			return float64(wc.Queued())
 		}),
 	)
+	return nil
 }
 
 func (wc *workCenter) Id() string {
@@ -72,7 +73,7 @@ func (wc *workCenter) BaselineProcessTime() int64 {
 	return wc.baselineProcessTime
 }
 
-func (wc *workCenter) Queue(workItem vsm.WorkItem) {
+func (wc *workCenter) Queue(workItem enzo.WorkItem) {
 	wc.queue = append(wc.queue, workItem)
 }
 
@@ -80,7 +81,7 @@ func (wc *workCenter) Queued() int {
 	return len(wc.queue)
 }
 
-func (wc *workCenter) Recieve(workItem vsm.WorkItem) error {
+func (wc *workCenter) Recieve(workItem enzo.WorkItem) error {
 	wc.Queue(workItem)
 	return nil
 }
@@ -96,27 +97,32 @@ func (wc *workCenter) process() {
 	}
 }
 
-func (wc *workCenter) Update(cfg vsm.WorkcenterConfig) error {
+func (wc *workCenter) ApplyConfig(cfg enzo.WorkcenterConfig) error {
 	wc.baselineProcessTime = cfg.BaselineProcessTime
 	wc.label = cfg.Label
 	return nil
 }
 
-func (wc *workCenter) Parent() vsm.MeshNetwork {
+func (wc *workCenter) Parent() enzo.MeshNetwork {
 	return wc.parent
 }
 
-func (wc *workCenter) SetParent(p vsm.MeshNetwork) error {
+func (wc *workCenter) SetParent(p enzo.MeshNetwork) error {
 	wc.parent = p
 	return nil
 }
 
+func (wc *workCenter) DeInit() error {
+	return fmt.Errorf("not implemented")
+}
+
+// A cell is a single processing unit within a workcenter, they are theoretically parallelizable
 type cell struct {
 	parent        *workCenter
-	item          vsm.WorkItem
+	item          enzo.WorkItem
 	lastStartTime int64
 	processTime   int64
-	clock         vsm.EnzoClock
+	clock         enzo.EnzoClock
 }
 
 func (c cell) ItemExtractable() bool {
@@ -139,7 +145,7 @@ func (c cell) HasItem() bool {
 	return c.item != nil
 }
 
-func (c *cell) Insert(w vsm.WorkItem) {
+func (c *cell) Insert(w enzo.WorkItem) {
 	fmt.Printf("WORKCENTER: %s beginning work on item %s, ETA: %d ticks\n", c.parent.Id(), w.Id(), c.processTime)
 	c.lastStartTime = c.clock.Now()
 	c.item = w

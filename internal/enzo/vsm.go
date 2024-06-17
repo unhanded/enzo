@@ -6,13 +6,13 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/unhanded/enzo-vsm/pkg/vsm"
+	"github.com/unhanded/enzo-vsm/pkg/enzo"
 	"gopkg.in/yaml.v3"
 )
 
 type Vsm struct {
 	// Fields
-	Network vsm.MeshNetwork
+	Network enzo.MeshNetwork
 	Prm     *prometheus.Registry
 }
 
@@ -29,7 +29,7 @@ func (v *Vsm) RegisterCollector(c prometheus.Collector) error {
 // Apply is a function that applies the configuration to the runtime
 // A Kubernetes-like interaction style
 func (v *Vsm) Apply(data []byte) (string, error) {
-	cfg := vsm.WorkcenterConfig{}
+	cfg := enzo.WorkcenterConfig{}
 	err := yaml.Unmarshal(data, &cfg)
 	if err != nil {
 		return "", err
@@ -42,7 +42,7 @@ func (v *Vsm) Apply(data []byte) (string, error) {
 	} else {
 		ctr := findInNetwork(v.Network, cfg.Id)
 		if ctr != nil {
-			ctr.Update(cfg)
+			ctr.ApplyConfig(cfg)
 			return fmt.Sprintf("updated workcenter/%s", cfg.Id), nil
 		}
 	}
@@ -50,7 +50,7 @@ func (v *Vsm) Apply(data []byte) (string, error) {
 }
 
 func (v *Vsm) Submit(data []byte) error {
-	cfg := vsm.WorkItemConfig{}
+	cfg := enzo.WorkItemConfig{}
 	err := json.Unmarshal(data, &cfg)
 	if err != nil {
 		return err
@@ -59,7 +59,7 @@ func (v *Vsm) Submit(data []byte) error {
 	if idErr != nil {
 		return idErr
 	}
-	steps := []vsm.EnzoDynamicStep{}
+	steps := []enzo.EnzoDynamicStep{}
 	for _, s := range cfg.Route.Steps {
 		stp := NewDynamicStep(s.Options...)
 		steps = append(steps, stp)
@@ -72,7 +72,11 @@ func (v *Vsm) Submit(data []byte) error {
 	return nil
 }
 
-func findInNetwork(n vsm.MeshNetwork, id string) vsm.EnzoWorkcenter {
+func (v *Vsm) DeInit() error {
+	return nil
+}
+
+func findInNetwork(n enzo.MeshNetwork, id string) enzo.Workcenter {
 	for _, node := range n.Nodes() {
 		if node.Id() == id {
 			return node
@@ -81,7 +85,7 @@ func findInNetwork(n vsm.MeshNetwork, id string) vsm.EnzoWorkcenter {
 	return nil
 }
 
-func existsInNetwork(n vsm.MeshNetwork, id string) bool {
+func existsInNetwork(n enzo.MeshNetwork, id string) bool {
 	for _, node := range n.Nodes() {
 		if node.Id() == id {
 			return true
