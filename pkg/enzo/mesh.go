@@ -15,8 +15,6 @@ type MeshNetwork interface {
 
 	Nodes() []Workcenter
 
-	Clock() EnzoClock
-
 	Init() error
 }
 

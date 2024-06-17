@@ -9,15 +9,13 @@ import (
 )
 
 func NewMesh() enzo.MeshNetwork {
-	return &mesh{
-		clk:         NewClock(0, 100), // Default 10 TPS
+	return &mesh{ // Default 10 TPS
 		workcenters: map[string]enzo.Workcenter{},
 	}
 }
 
 type mesh struct {
 	parent        enzo.Vsm
-	clk           enzo.EnzoClock
 	workcenters   map[string]enzo.Workcenter
 	finishedItems int
 }
@@ -38,14 +36,7 @@ func (m *mesh) Init() error {
 		prometheus.CounterOpts{Name: "finished_items", Help: "Number of finished work items"},
 		func() float64 { return float64(m.finishedItems) },
 	))
-
-	m.clk.Init()
-
 	return nil
-}
-
-func (m *mesh) Clock() enzo.EnzoClock {
-	return m.clk
 }
 
 func (m *mesh) Enroll(center enzo.Workcenter) error {

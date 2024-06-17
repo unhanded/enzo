@@ -1,0 +1,25 @@
+syntax = "proto3";
+package enzo_proto;
+
+option go_package = "internal/enzo_proto";
+
+
+// [START messages]
+message WorkItem {
+  int32 version = 1;
+
+  bytes id = 2;
+
+  string label = 3;
+
+  DynamicRoute route = 4;
+}
+
+message DynamicRoute {
+  repeated DynamicStep steps = 1;
+}
+
+message DynamicStep {
+  bool step_completed = 1;
+  repeated string ids = 2;
+}

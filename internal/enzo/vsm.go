@@ -19,6 +19,20 @@ type Vsm struct {
 func (v *Vsm) Init() error {
 	v.Network.SetParent(v)
 	v.Network.Init()
+	v.RegisterCollector(
+		prometheus.NewGaugeFunc(
+			prometheus.GaugeOpts{
+				Namespace: "enzo",
+				Subsystem: "vsm",
+				Name:      "timestep",
+				Help:      "Current timestep",
+			},
+			func() float64 {
+				return float64(Now())
+			},
+		),
+	)
+
 	return nil
 }
 
