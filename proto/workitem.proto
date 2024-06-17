@@ -12,14 +12,10 @@ message WorkItem {
 
   string label = 3;
 
-  DynamicRoute route = 4;
-}
-
-message DynamicRoute {
-  repeated DynamicStep steps = 1;
+  repeated DynamicStep steps = 4;
 }
 
 message DynamicStep {
   bool step_completed = 1;
-  repeated string ids = 2;
+  repeated bytes ids = 2;
 }
