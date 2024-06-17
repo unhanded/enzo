@@ -1,17 +1,18 @@
-build: pb go
+build: protobuf go
 
 
 go:
 	echo "building go application..."
-	go build -o build/server ./app/server
+	go build -o out/server ./app/server
+	go build -o out/enzoctl ./cmd/enzoctl
 
-pb: go proto-clean
+protobuf: proto-clean
 	echo "building protobuf assets..."
 	mkdir ./internal/enzo_proto
 	protoc --plugin=$(shell which protoc-gen-go) --go_out=./ ./proto/workitem.proto
 
 clean:
-	rm -rf ./build
+	rm -rf ./out
 	rm -rf ./internal/enzo_proto
 
 proto-clean:
