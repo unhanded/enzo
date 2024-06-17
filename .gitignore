@@ -19,4 +19,9 @@
 
 # Go workspace file
 go.work
+
+# MacOS junk
 **.DS_Store
+
+# protobuf generated files
+**/*.pb.go
