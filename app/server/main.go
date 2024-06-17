@@ -11,7 +11,15 @@ import (
 )
 
 func main() {
-	app := fiber.New(fiber.Config{ReadTimeout: time.Second * 3, WriteTimeout: time.Second * 5})
+	app := fiber.New(
+		fiber.Config{
+			ReadTimeout:           time.Second * 3,
+			WriteTimeout:          time.Second * 5,
+			ServerHeader:          "enzo",
+			DisableStartupMessage: true,
+		},
+	)
+
 	m := enzo.NewMesh()
 	v := runtime.CreateVSM(m)
 	initErr := v.Init()
@@ -23,5 +31,6 @@ func main() {
 	app.Post("/apply", runtime.HandleApply(v))
 	app.Post("/submit", runtime.HandleSubmit(v))
 	app.Get("/metrics", adaptor.HTTPHandler(promhttp.HandlerFor(v.Prm, promhttp.HandlerOpts{})))
+
 	app.Listen(":29451")
 }
