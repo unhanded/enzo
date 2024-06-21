@@ -1,4 +1,4 @@
-module github.com/unhanded/enzo-vsm
+module github.com/unhanded/enzo
 
 go 1.22.4
 
