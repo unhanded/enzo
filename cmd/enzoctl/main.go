@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/unhanded/enzo-vsm/internal/enzocfg"
-	"github.com/unhanded/enzo-vsm/pkg/enzo"
+	"github.com/unhanded/enzo/internal/enzocfg"
+	"github.com/unhanded/enzo/pkg/enzo"
 	"gopkg.in/yaml.v3"
 )
 

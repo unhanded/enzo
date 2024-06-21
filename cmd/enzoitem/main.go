@@ -9,8 +9,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/unhanded/enzo-vsm/internal/enzocfg"
-	"github.com/unhanded/enzo-vsm/pkg/enzo"
+	"github.com/unhanded/enzo/internal/enzocfg"
+	"github.com/unhanded/enzo/pkg/enzo"
 )
 
 func main() {

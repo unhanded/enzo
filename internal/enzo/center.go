@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/unhanded/enzo-vsm/pkg/enzo"
+	"github.com/unhanded/enzo/pkg/enzo"
 )
 
 func NewWorkcenter(wCfg enzo.WorkcenterConfig) enzo.Workcenter {

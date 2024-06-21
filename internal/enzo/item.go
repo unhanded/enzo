@@ -3,7 +3,7 @@ package enzo
 import (
 	"fmt"
 
-	"github.com/unhanded/enzo-vsm/pkg/enzo"
+	"github.com/unhanded/enzo/pkg/enzo"
 )
 
 func NewWorkItem(id string, label string, characteristics []byte, route enzo.EnzoDynamicRoute) enzo.WorkItem {

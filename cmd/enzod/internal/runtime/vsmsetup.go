@@ -5,8 +5,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/unhanded/enzo-vsm/internal/enzo"
-	enzo1 "github.com/unhanded/enzo-vsm/pkg/enzo"
+	"github.com/unhanded/enzo/internal/enzo"
+	enzo1 "github.com/unhanded/enzo/pkg/enzo"
 )
 
 func CreateVSM(m enzo1.MeshNetwork) *enzo.Vsm {

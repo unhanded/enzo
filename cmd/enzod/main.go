@@ -6,8 +6,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/unhanded/enzo-vsm/cmd/enzod/internal/runtime"
-	"github.com/unhanded/enzo-vsm/internal/enzo"
+	"github.com/unhanded/enzo/cmd/enzod/internal/runtime"
+	"github.com/unhanded/enzo/internal/enzo"
 )
 
 func main() {

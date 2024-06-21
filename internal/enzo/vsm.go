@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/unhanded/enzo-vsm/pkg/enzo"
+	"github.com/unhanded/enzo/pkg/enzo"
 	"gopkg.in/yaml.v3"
 )
 

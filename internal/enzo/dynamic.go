@@ -3,7 +3,7 @@ package enzo
 import (
 	"fmt"
 
-	"github.com/unhanded/enzo-vsm/pkg/enzo"
+	"github.com/unhanded/enzo/pkg/enzo"
 )
 
 func NewDynamicRoute(steps ...enzo.EnzoDynamicStep) enzo.EnzoDynamicRoute {
