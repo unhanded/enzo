@@ -1,3 +1,3 @@
 id: "x1"
-label: "WC-Applied-X1"
-baseline_process_time: 8000
+name: "WC-Applied-X1"
+value: 8000

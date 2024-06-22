@@ -1,4 +1,4 @@
-package enzocfg
+package cfg
 
 import (
 	"fmt"
