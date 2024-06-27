@@ -1,13 +1,15 @@
 package enzo
 
 import (
-	"github.com/unhanded/flownet/pkg/fnet"
-	"github.com/unhanded/flownet/pkg/ifnet"
+	"github.com/unhanded/flownet/pkg/core"
+	"github.com/unhanded/flownet/pkg/flownet"
 )
 
-func NewNetwork() ifnet.FNet {
-	return fnet.New()
+func NewNetwork() flownet.FNet[AuxData] {
+	return core.New[AuxData]()
 }
+
+type AuxData struct{}
 
 type NetNode struct {
 	NodeName  string  `json:"name" yaml:"name"`
@@ -15,7 +17,7 @@ type NetNode struct {
 	NodeValue float64 `json:"value" yaml:"value"`
 }
 
-func (n *NetNode) GetTimeoutDuration(r ifnet.Route) float64 {
+func (n *NetNode) GetResistance(r flownet.Probe) float64 {
 	return n.NodeValue
 }
 
@@ -25,4 +27,8 @@ func (n *NetNode) Id() string {
 
 func (n *NetNode) Name() string {
 	return n.NodeName
+}
+
+func (n *NetNode) Data() AuxData {
+	return AuxData{}
 }

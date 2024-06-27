@@ -23,8 +23,18 @@ func main() {
 			DisableStartupMessage: true,
 		},
 	)
+	app.Get("/nodes", func(c *fiber.Ctx) error {
+		nodes := enzo.NodeCollection{Nodes: network.Nodes()}
 
-	app.Get("/api", func(c *fiber.Ctx) error {
+		b, err := json.Marshal(nodes)
+		if err != nil {
+			c.Status(500)
+			return err
+		}
+		c.Write(b)
+		return c.SendStatus(200)
+	})
+	app.Get("/stats", func(c *fiber.Ctx) error {
 		nodes := network.Nodes()
 		nodeIds := []string{}
 
@@ -39,7 +49,7 @@ func main() {
 		return c.Status(200).JSON(d)
 	})
 
-	app.Post("/api", func(c *fiber.Ctx) error {
+	app.Post("/node", func(c *fiber.Ctx) error {
 		nn := &enzo.NetNode{}
 		jErr := json.Unmarshal(c.Body(), &nn)
 		if jErr != nil {
@@ -56,5 +66,5 @@ func main() {
 
 	app.Get("/metrics", adaptor.HTTPHandler(promhttp.HandlerFor(dg, promhttp.HandlerOpts{})))
 
-	app.Listen(":29451")
+	app.Listen(":8080")
 }
