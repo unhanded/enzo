@@ -7,6 +7,7 @@ import (
 
 	"github.com/unhanded/enzo/internal/apply"
 	"github.com/unhanded/enzo/internal/del"
+	"github.com/unhanded/enzo/internal/get"
 	"github.com/unhanded/enzo/internal/probe"
 )
 
@@ -29,6 +30,8 @@ func main() {
 		apply.Run(fPath, host, port)
 	case "delete":
 		del.Run(flag.Arg(1), host, port)
+	case "get":
+		get.Run(host, port)
 	default:
 		fmt.Printf("No command found, exiting..\n")
 		os.Exit(0)

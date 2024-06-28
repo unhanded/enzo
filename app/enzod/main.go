@@ -28,12 +28,10 @@ func main() {
 	)
 
 	useNodeGetHandler(app, network)
-
-	useStatsHandler(app, network)
-
 	useNodePostHandler(app, network)
-
+	useNodeDeleteHandler(app, network)
 	useProbeHandler(app, network)
+	useStatsHandler(app, network)
 
 	usePrometheus(app)
 
