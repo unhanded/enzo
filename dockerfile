@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN go build ./cmd/enzod
+RUN go build ./app/enzod
 
 FROM debian:latest as RUNNER
 
