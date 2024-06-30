@@ -1,4 +1,4 @@
-package enzo
+package core
 
 import (
 	"github.com/unhanded/flownet/pkg/core"
@@ -9,12 +9,16 @@ func NewNetwork() flownet.FNet[AuxData] {
 	return core.New[AuxData]()
 }
 
-type AuxData struct{}
+type AuxData struct {
+	coordinateX float64
+	coordinateY float64
+}
 
 type NetNode struct {
-	NodeName  string  `json:"name" yaml:"name"`
-	NodeId    string  `json:"id" yaml:"id"`
-	NodeValue float64 `json:"value" yaml:"value"`
+	NodeName  string  `json:"name"`
+	NodeId    string  `json:"id"`
+	NodeValue float64 `json:"value"`
+	AuxData   AuxData
 }
 
 func (n *NetNode) GetResistance(r flownet.Probe) float64 {
@@ -30,5 +34,5 @@ func (n *NetNode) Name() string {
 }
 
 func (n *NetNode) Data() AuxData {
-	return AuxData{}
+	return n.AuxData
 }

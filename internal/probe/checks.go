@@ -5,11 +5,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/unhanded/enzo/internal/enzo"
+	"github.com/unhanded/enzo/internal/core"
 	"github.com/unhanded/enzo/internal/utils"
 )
 
-func VerifiedOpenFile(fp string) (*enzo.EnzoItem, error) {
+func VerifiedOpenFile(fp string) (*core.EnzoItem, error) {
 	if err := guardFileEnding(fp); err != nil {
 		return nil, err
 	}
@@ -19,7 +19,7 @@ func VerifiedOpenFile(fp string) (*enzo.EnzoItem, error) {
 		return nil, fileErr
 	}
 
-	item, uErr := utils.Unmarshal[enzo.EnzoItem](b)
+	item, uErr := utils.Unmarshal[core.EnzoItem](b)
 	if uErr != nil {
 		return nil, uErr
 	}

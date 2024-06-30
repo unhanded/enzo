@@ -8,15 +8,15 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/unhanded/enzo/internal/enzo"
+	"github.com/unhanded/enzo/internal/core"
 	"github.com/unhanded/enzo/internal/utils"
 	"github.com/unhanded/flownet/pkg/flownet"
 )
 
-type Net = flownet.FNet[enzo.AuxData]
+type Net = flownet.FNet[core.AuxData]
 
 func main() {
-	network := enzo.NewNetwork()
+	network := core.NewNetwork()
 
 	app := fiber.New(
 		fiber.Config{
@@ -40,7 +40,7 @@ func main() {
 
 func useNodeGetHandler(app *fiber.App, network Net) {
 	app.Get("/nodes", func(c *fiber.Ctx) error {
-		nodes := enzo.NodeCollection{Nodes: network.Nodes()}
+		nodes := core.NodeCollection{Nodes: network.Nodes()}
 
 		b, err := json.Marshal(nodes)
 		if err != nil {
@@ -70,15 +70,17 @@ func useStatsHandler(app *fiber.App, network Net) {
 }
 
 func useNodePostHandler(app *fiber.App, network Net) {
-	app.Post("/node", func(c *fiber.Ctx) error {
-		nn := &enzo.NetNode{}
+	app.Post("/node/:nodeId", func(c *fiber.Ctx) error {
+		nodeId := c.Params("nodeId")
+		if nodeId == "" {
+			return c.Status(400).JSON(map[string]string{"error": "nodeId not found"})
+		}
+		nn := &core.NetNode{}
 		jErr := json.Unmarshal(c.Body(), &nn)
 		if jErr != nil {
 			return c.Status(400).JSON(map[string]string{"error": jErr.Error()})
 		}
-		if nn.NodeId == "" {
-			return c.SendStatus(400)
-		}
+		nn.NodeId = nodeId
 		for _, n := range network.Nodes() {
 			if n.Id() == nn.Id() {
 				network.RemoveNode(n.Id())
@@ -102,7 +104,7 @@ func useNodeDeleteHandler(app *fiber.App, network Net) {
 
 func useProbeHandler(app *fiber.App, network Net) {
 	app.Post("/probe", func(c *fiber.Ctx) error {
-		item, err := utils.Unmarshal[enzo.EnzoItem](c.Body())
+		item, err := utils.Unmarshal[core.EnzoItem](c.Body())
 
 		if err != nil {
 			return c.Status(400).JSON(map[string]string{"error": err.Error()})

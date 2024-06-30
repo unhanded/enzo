@@ -1,4 +1,4 @@
-package enzo
+package core
 
 import "github.com/unhanded/flownet/pkg/flownet"
 
