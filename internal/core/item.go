@@ -8,7 +8,11 @@ type EnzoItem struct {
 }
 
 func (it *EnzoItem) Attributes() flownet.Attributes {
-	return nil
+	if it.Attr == nil {
+		return flownet.Attributes{}
+	} else {
+		return it.Attr
+	}
 }
 
 func (it *EnzoItem) NodeIds() []string {
