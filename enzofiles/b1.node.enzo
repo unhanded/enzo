@@ -1,5 +1,6 @@
 {
 	"name": "WC-B1",
 	"id": "b1",
-	"value": 350
+	"value": 350,
+	"modifiers":{}
 }
