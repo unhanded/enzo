@@ -22,32 +22,54 @@ func main() {
 		fiber.Config{
 			ReadTimeout:           time.Second * 3,
 			WriteTimeout:          time.Second * 5,
-			ServerHeader:          "enzo",
+			ServerHeader:          "enzod",
 			DisableStartupMessage: true,
 		},
 	)
+	dg := prometheus.DefaultGatherer
+	app.Get("/metrics", adaptor.HTTPHandler(promhttp.HandlerFor(dg, promhttp.HandlerOpts{})))
 
-	useNodeGetHandler(app, network)
-	useNodePostHandler(app, network)
-	useNodeDeleteHandler(app, network)
+	useNodeHandler(app, network)
 	useProbeHandler(app, network)
 	useStatsHandler(app, network)
-
-	usePrometheus(app)
 
 	app.Listen(":8080")
 }
 
-func useNodeGetHandler(app *fiber.App, network Net) {
-	app.Get("/nodes", func(c *fiber.Ctx) error {
-		nodes := core.NodeCollection{Nodes: network.Nodes()}
+func useNodeHandler(app *fiber.App, network Net) {
+	grp := app.Group("/node")
 
-		b, err := json.Marshal(nodes)
-		if err != nil {
-			c.Status(500)
-			return err
+	grp.Get("/", func(c *fiber.Ctx) error { return c.JSON(core.NodeCollection{Nodes: network.Nodes()}) })
+
+	grp.Post("/:nodeId", func(c *fiber.Ctx) error {
+		nodeId := c.Params("nodeId")
+		if nodeId == "" {
+			return c.Status(400).JSON(map[string]string{"error": "nodeId not found"})
 		}
-		c.Write(b)
+		nn := core.NetNode{}
+		jErr := json.Unmarshal(c.Body(), &nn)
+		if jErr != nil {
+			return c.Status(400).JSON(map[string]string{"error": jErr.Error()})
+		}
+
+		nn.NodeId = nodeId
+		for _, n := range network.Nodes() {
+			if n.Id() == nn.Id() {
+				network.RemoveNode(n.Id())
+			}
+		}
+		network.AddNodes(&nn)
+		return c.Status(200).JSON(map[string]string{"status": "ok"})
+	})
+
+	grp.Delete("/:nodeId", func(c *fiber.Ctx) error {
+		var nId string = ""
+		if nId := c.Params("nodeId"); nId == "" {
+			return c.Status(400).JSON(map[string]interface{}{"error": "nodeId not found"})
+		}
+		if err := network.RemoveNode(nId); err != nil {
+			return c.SendStatus(500)
+		}
 		return c.SendStatus(200)
 	})
 }
@@ -69,36 +91,10 @@ func useStatsHandler(app *fiber.App, network Net) {
 	})
 }
 
-func useNodePostHandler(app *fiber.App, network Net) {
-	app.Post("/node/:nodeId", func(c *fiber.Ctx) error {
-		nodeId := c.Params("nodeId")
-		if nodeId == "" {
-			return c.Status(400).JSON(map[string]string{"error": "nodeId not found"})
-		}
-		nn := &core.NetNode{}
-		jErr := json.Unmarshal(c.Body(), &nn)
-		if jErr != nil {
-			return c.Status(400).JSON(map[string]string{"error": jErr.Error()})
-		}
-		nn.NodeId = nodeId
-		for _, n := range network.Nodes() {
-			if n.Id() == nn.Id() {
-				network.RemoveNode(n.Id())
-			}
-		}
-		network.AddNodes(nn)
-		return c.Status(200).JSON(map[string]string{"status": "ok"})
-	})
-}
-
-func useNodeDeleteHandler(app *fiber.App, network Net) {
-	app.Delete("/node/:nodeId", func(c *fiber.Ctx) error {
-		nId := c.Params("nodeId")
-		if nId == "" {
-			return c.Status(400).JSON(map[string]interface{}{"error": "nodeId not found"})
-		}
-		network.RemoveNode(nId)
-		return c.SendStatus(200)
+func useApiHandler(app *fiber.App) {
+	routes := app.GetRoutes()
+	app.Get("/api", func(c *fiber.Ctx) error {
+		return c.JSON(map[string]interface{}{"routes": routes})
 	})
 }
 
@@ -121,9 +117,4 @@ func useProbeHandler(app *fiber.App, network Net) {
 		}
 		return c.SendStatus(200)
 	})
-}
-
-func usePrometheus(app *fiber.App) {
-	dg := prometheus.DefaultGatherer
-	app.Get("/metrics", adaptor.HTTPHandler(promhttp.HandlerFor(dg, promhttp.HandlerOpts{})))
 }
