@@ -1,0 +1,9 @@
+{
+  "nodes":[
+      "a1",
+      "b1"
+    ],
+    "attributes":{
+    	"weight":100
+    }
+}

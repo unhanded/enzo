@@ -4,8 +4,8 @@ go 1.22.4
 
 require (
 	github.com/gofiber/fiber/v2 v2.52.4
-	github.com/google/uuid v1.5.0
 	github.com/prometheus/client_golang v1.19.1
+	github.com/unhanded/flownet v0.0.5
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -13,6 +13,7 @@ require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
+	github.com/google/uuid v1.5.0 // indirect
 	github.com/klauspost/compress v1.17.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
